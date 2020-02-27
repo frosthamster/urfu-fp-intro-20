@@ -59,6 +59,7 @@ a, b, m :: Int -- такая запись означает, что a, b, m им�
 a = 50
 b = 564 + 123
 m = 34 * 50
+
 -- ^ термы определяются через уравнения
 
 {-
@@ -247,7 +248,8 @@ someArithmeticCalculations =
     - если n < 0, то "negative"
 -}
 tellSign :: Int -> String
-tellSign n = error "not implemented"
+tellSign n = if n == 0 then "zero" else
+  (if n > 0 then "positive" else "negative")
 
 {-
   `howManyDigits` возвращает количество цифр целого числа `n`:
@@ -256,7 +258,10 @@ tellSign n = error "not implemented"
     - если n >= 100, то "three-digit or more"
 -}
 howManyDigits :: Int -> String
-howManyDigits n = error "not implemented"
+howManyDigits x = if n <= 9 then "single" else
+  (if n >= 100 then "three-digit or more" else "two-digit")
+  where
+    n = abs x
 
 {-
   `describeNumber` возвращает полное описание целого числа, используя
@@ -267,7 +272,7 @@ howManyDigits n = error "not implemented"
     - если n >= 100, то "positive three-digit or more"
 -}
 describeNumber :: Int -> String
-describeNumber n = error "not implemented"
+describeNumber n = (tellSign n) ++ " " ++ (howManyDigits n)
 
 -- </Задачи для самостоятельного решения>
 
@@ -303,7 +308,8 @@ makeZero x =
   больших чисел.
 -}
 factorial :: Integer -> Integer
-factorial n = error "not implemented"
+factorial n = if n == 0 then 1 else 
+  n * (factorial $ n - 1)
 
 {-
   На вход приходит целое число. Необходимо вернуть количество цифр:
@@ -312,7 +318,9 @@ factorial n = error "not implemented"
     - если n = 144545, то 6
 -}
 digitsCount :: Int -> Int
-digitsCount n = error "not implemented"
+digitsCount n = if abs_n < 10 then 1 else 1 + digitsCount (div abs_n 10)
+  where
+    abs_n = abs n
 
 -- </Задачи для самостоятельного решения>
 
