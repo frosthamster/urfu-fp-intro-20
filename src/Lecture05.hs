@@ -128,22 +128,10 @@ allCountries =
   , Country "USA" 0
   , Country "GreatBritain" 0 ]
 
-c_getIdx :: String -> Int
-c_getIdx name = case name of
-  "China" -> 0
-  "Russia" -> 1
-  "Italy" -> 2
-  "USA" -> 3
-  "GreatBritain" -> 4
-  otherwise -> error ""
-
-handleEvent :: [Country] -> Country -> [Country]
-handleEvent stats (Country name v) =
-  let n = c_getIdx name in
-  let (Country _ v') = stats!!n in
-  take n stats ++ [Country name (v+v')] ++ drop (n + 1) stats
-
 stat :: [Country] -> [Country]
-stat events = foldl' handleEvent allCountries events
+stat e = map toStat allCountries
+  where
+    getCountryStat events name = sum $ map (\(Country n v) -> if n /= name then 0 else v) events
+    toStat (Country name _) = Country name $ getCountryStat e name
 
 -- </Задачи для самостоятельного решения>
