@@ -1,5 +1,8 @@
 module Lecture05 where
 
+import Data.List
+import Data.Maybe
+
 {-
   05: Ленивость
 
@@ -43,11 +46,15 @@ module Lecture05 where
     https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#/media/File:Sieve_of_Eratosthenes_animation.gif
 -}
 sieve :: [Integer] -> [Integer]
-sieve xs = error "not implemented"
+sieve = \case
+  [] -> []
+  x : xs -> x : sieve (filter (\e -> mod e x /= 0) xs)
 
 -- Функция, возвращающая n-ое простое число. Для её реализации используйте функцию sieve
 nthPrime :: Int -> Integer
-nthPrime n = error "not implemented"
+nthPrime n
+  | n < 1 = error "incorrect index"
+  | otherwise = (sieve [2..])!!(n - 1)
 
 {-
     Недавно в интервью Forbes с Сергеем Гуриевым Андрей Мовчан решил показать, что он
@@ -71,11 +78,17 @@ nthPrime n = error "not implemented"
 -- Возвращает бесконечный список ВВП на годы и годы вперёд
 -- yearGDP 100 0.1 ~> [100, 100.1, 100.20009(9), 100.3003.., ...]
 yearGDP :: Double -> Double -> [Double]
-yearGDP now percent = error "not implemented"
+yearGDP now percent = iterate (\e -> e + e * percent / 100) now
 
 -- Возвращает количество лет, которые нужны Китаю, чтобы догнать США в текущих условиях
 inHowManyYearsChinaWins :: Int
-inHowManyYearsChinaWins = error "not implemented"
+inHowManyYearsChinaWins = 1 + (
+    fromJust $ 
+      findIndex 
+      (\(a, c) -> c > a) 
+      (zip (yearGDP 66 2) (yearGDP 10 6))
+  )
+
 
 {-
   Пусть у нас есть некоторая лента событий, каждое сообщение в которой говорит,
@@ -107,7 +120,7 @@ inHowManyYearsChinaWins = error "not implemented"
 
 data Country = Country String Integer deriving (Eq, Show)
 
-allCountries :: [Country]
+allCountries :: [Country] -- отличная идея хранить в списке
 allCountries =
   [ Country "China" 0
   , Country "Russia" 0
@@ -115,7 +128,22 @@ allCountries =
   , Country "USA" 0
   , Country "GreatBritain" 0 ]
 
+c_getIdx :: String -> Int
+c_getIdx name = case name of
+  "China" -> 0
+  "Russia" -> 1
+  "Italy" -> 2
+  "USA" -> 3
+  "GreatBritain" -> 4
+  otherwise -> error ""
+
+handleEvent :: [Country] -> Country -> [Country]
+handleEvent stats (Country name v) =
+  let n = c_getIdx name in
+  let (Country _ v') = stats!!n in
+  take n stats ++ [Country name (v+v')] ++ drop (n + 1) stats
+
 stat :: [Country] -> [Country]
-stat events = error "not implemented"
+stat events = foldl' handleEvent allCountries events
 
 -- </Задачи для самостоятельного решения>
